@@ -21,6 +21,14 @@ class AbstractTestTransform(unittest.TestCase):
         for i in range(1, len(real)):
             self.assertEqual(real[i - 1] <= real[i], work[i - 1] <= work[i])
 
+    def _test_invalid_real_inputs(self):
+        if self.transform.lower_bound > -np.infty:
+            with self.assertRaises(ValueError):
+                self.transform.to_work_series(pd.Series([self.transform.lower_bound - 1e-3]))
+        if self.transform.upper_bound < np.infty:
+            with self.assertRaises(ValueError):
+                self.transform.to_work_series(pd.Series([self.transform.upper_bound + 1e-3]))
+
 
 class TestLogarithmic(AbstractTestTransform):
 
@@ -42,6 +50,9 @@ class TestLogarithmic(AbstractTestTransform):
         actual = self.transform.to_real_series(work)
         pd.testing.assert_series_equal(expected, actual, rtol=1e-12, atol=1e-12)
 
+    def test_invalid_real_inputs(self):
+        self._test_invalid_real_inputs()
+
 
 class TestLogit(AbstractTestTransform):
 
@@ -62,6 +73,9 @@ class TestLogit(AbstractTestTransform):
         expected = pd.Series([0., 1.])
         actual = self.transform.to_real_series(work)
         pd.testing.assert_series_equal(expected, actual, rtol=1e-12, atol=1e-12)
+
+    def test_invalid_real_inputs(self):
+        self._test_invalid_real_inputs()
 
 
 if __name__ == '__main__':
