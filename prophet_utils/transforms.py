@@ -9,18 +9,18 @@ from scipy import special
 class Transform(abc.ABC):
     """Abstract interface to data transformation used to help Prophet forecast in bounded domains.
 
-    Converts bounded real data to and from a "working" space in which they are unbounded.
+    Converts bounded real data to and from Prophet's working space in which they are unbounded.
     Once the data are in the working space, a Prophet model can be trained and used for forecasting.
     The forecasts need to be converted from the working space back to real space by the same instance
     of `Transform` class.
 
     Implementations must ensure that the result of converting finite real data to work space does not produce
-    NaNs or infinities. Transformation from real to work space must be strictly order-preserving.
+    NaNs or infinities. Transformation from real to working space must be strictly order-preserving.
     """
 
     @abc.abstractmethod
     def to_work_series(self, data: pd.Series) -> pd.Series:
-        """Converts data from real space to work space.
+        """Converts data from real space to working space.
 
         Raises:
             ValueError if `data` do not respect the lower and upper bound.
@@ -29,7 +29,7 @@ class Transform(abc.ABC):
 
     @abc.abstractmethod
     def to_real_series(self, data: pd.Series) -> pd.Series:
-        """Converts data from work space to real space."""
+        """Converts data from working space to real space."""
         ...
 
     @property
@@ -102,7 +102,7 @@ class Logit(Transform):
         """Constructor.
 
         Args:
-            eps: Used compress the data range from [0, 1] to [eps, 1 - eps], so that the logit transform does not yield
+            eps: Used to compress the data range from [0, 1] to [eps, 1 - eps], so that the logit transform does not yield
                 +/- Infinity on valid data.
         """
         super().__init__()
